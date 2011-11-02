@@ -1,0 +1,55 @@
+#!/bin/sh
+# Plugin to monitor haproxy error responses                                  
+#
+# Config: You have to name the file as you want
+# but always with _frontends/_backends at the end
+# to make script functional
+#                                                                            
+# Author: Ismael Sanchez <isma@ismagnu.com>                                
+# Based on haproxy_bytes_frontends from                                       
+# Pasha "p01nt" Klets <pasha@klets.name>                                      
+#                                                                             
+# License GNU GPL License v2 and above  
+
+name=`basename $0`
+title=`echo ${name} | awk -F_ '{print $NF}'`
+
+echo $name
+echo $title
+
+hp_stat() {
+	echo "show stat" | socat unix-connect:/tmp/haproxy stdio
+}
+
+servers_section() {
+	hp_stat | grep ${title}
+}
+
+labels() {
+        servers_section | awk -F, '{print $2"_1xx.label "$2"_1xx \n"$2"_1xx.type COUNTER\n"$2"_2xx.label "$2"_2xx \n"$2"_2xx.type COUNTER\n"$2"_3xx.label "$2"_3xx \n"$2"_3xx.type COUNTER\n"$2"_4xx.label "$2"_4xx \n"$2"_4xx.type COUNTER\n"$2"_5xx.label "$2"_5xx \n"$2"_5xx.type COUNTER\n"}'
+
+}
+
+values() {
+	servers_section | awk -F, '{print $2"_1xx.value "$40"\n"$2"_2xx.value "$41"\n"$2"_3xx.value "$42"\n"$2"_4xx.value "$43"\n"$2"_5xx.value "$44"\n"}'
+}
+
+graph_title="${title} HTTP Errors"
+graph_vlabel="${title} # err"
+
+case $1 in
+   config)
+cat <<EOF
+graph_category haproxy
+graph_title  ${graph_title}
+graph_vlabel ${graph_vlabel}
+
+`labels`
+EOF
+		exit 0
+	;;
+esac
+
+values
+
+exit 
