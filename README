@@ -1,0 +1,34 @@
+Plugin to monitor haproxy error responses.
+(Errors type 1xx, 2xx, 3xx, 4xx and 5xx)                                  
+
+Config: 
+	You have to name the file as you want 
+	but always with the last "_" , identifying your
+	server.
+	
+	Ex.
+   		haproxy_errors_myserver
+
+Steps to activate:
+	- Name the plugin as haproxy_errors_"server-name"
+	- Be sure to configure your haproxy socket folder. 
+	- Put the file on the munin-plugins folder.
+	- Run munin-run "filename".
+	- Reboot your munin daemon.
+
+Common issues:
+	- Configure your haproxy socket folder.
+		- On line 21, change (socat unix-connect:/tmp/haproxy stdio)
+		  directory to fits your needs.
+
+###########################################################################
+# Copyright (c) 2011 by Ismael Sánchez
+# 
+# Author: Ismael Sanchez <isma@ismagnu.com>                                
+# Based on haproxy_bytes_frontends from                                       
+# Pasha "p01nt" Klets <pasha@klets.name>                                      
+#                                                                             
+# License GNU GPL License v2 and above 
+# 
+# FEEL FREE TO IMPROVE WHAT YOU WANT BUT RESPECT GNU GPL!!! 
+########################################################################### 
